@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Charles' Law — Baking a Cake</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --charles:#185FA5;--charles-light:#E6F1FB;--charles-mid:#378ADD;--charles-border:#B5D4F4;
+    --amber:#EF9F27;--amber-light:#FAEEDA;--amber-border:#F5C97A;
+    --teal:#1D9E75;--teal-light:#E1F5EE;--teal-border:#5DCAA5;
+    --coral:#D85A30;--coral-light:#FAECE7;--coral-border:#F0A98A;
+    --purple:#534AB7;--purple-light:#EEEDFE;--purple-border:#AFA9EC;
+    --text:#1a1a2e;--muted:#5F5E5A;--bg:#f7f5f0;--white:#fff;--border:#D3D1C7;
+  }
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
+
+  .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--charles);background:var(--charles-light);border:1px solid var(--charles-border);border-radius:8px;padding:7px 14px;transition:opacity .15s;}
+  .back-btn:hover{opacity:.8;}
+  .topbar-title{font-size:13px;color:var(--muted);font-weight:500;}
+
+  .hero{background:var(--white);border-bottom:1px solid var(--border);padding:28px 20px 24px;text-align:center;}
+  .law-badge{display:inline-block;background:var(--charles-light);color:var(--charles);border:1px solid var(--charles-border);border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;margin-bottom:12px;}
+  h1{font-family:'DM Serif Display',serif;font-size:clamp(20px,5vw,30px);line-height:1.2;margin-bottom:8px;}
+  .tagline{font-size:13px;color:var(--muted);max-width:480px;margin:0 auto 16px;line-height:1.6;}
+  .formula-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .formula-pill{display:flex;align-items:center;gap:8px;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:500;border:1px solid var(--charles-border);background:var(--charles-light);color:var(--charles);}
+  .formula-pill .eq{font-family:'DM Serif Display',serif;font-size:15px;}
+
+  .step-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:22px 20px 14px;max-width:780px;margin:0 auto;}
+  .step-btn{cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .2s;display:flex;align-items:center;gap:6px;}
+  .step-btn:hover{border-color:var(--charles);color:var(--charles);background:var(--charles-light);}
+  .step-btn.active{background:var(--charles);color:white;border-color:var(--charles);}
+  .step-num{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.25);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .step-btn:not(.active) .step-num{background:var(--bg);color:var(--muted);}
+
+  .main-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:18px;max-width:780px;margin:0 auto 14px;}
+  .wrap{padding:0 20px;max-width:780px;margin:0 auto;}
+
+  .fact-card{border-radius:12px;padding:14px 18px;font-size:14px;line-height:1.6;border:1px solid var(--border);background:var(--charles-light);color:var(--charles);margin-bottom:12px;transition:background .3s,color .3s,border-color .3s;}
+  .fact-card strong{font-weight:600;display:block;margin-bottom:3px;font-size:15px;}
+  .principle{border-radius:12px;padding:13px 18px;background:var(--white);border:1px solid var(--border);font-size:13px;color:var(--muted);text-align:center;margin-bottom:14px;}
+  .principle em{font-style:italic;color:var(--charles);font-weight:500;}
+  .tag-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+  .tag{border-radius:8px;padding:7px 13px;font-size:13px;font-weight:500;border:1px solid transparent;}
+  .tag.blue{background:var(--charles-light);color:var(--charles);border-color:var(--charles-border);}
+  .tag.amber{background:var(--amber-light);color:#633806;border-color:var(--amber-border);}
+
+  @keyframes heat-wave{0%,100%{opacity:.4;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+  @keyframes bubble-pulse{0%,100%{opacity:.85}50%{opacity:1}}
+  @keyframes rise-arrow{0%{opacity:0;transform:translateY(4px)}40%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+  .heat-wave{animation:heat-wave 1.3s ease-in-out infinite;}
+  .heat-wave2{animation:heat-wave 1.3s ease-in-out infinite .25s;}
+  .heat-wave3{animation:heat-wave 1.3s ease-in-out infinite .5s;}
+  .bubble-anim{animation:bubble-pulse 1.4s ease-in-out infinite;}
+  .rise-arrow{animation:rise-arrow 1.8s ease-in-out infinite;}
+  .rise-arrow2{animation:rise-arrow 1.8s ease-in-out infinite .4s;}
+  .rise-arrow3{animation:rise-arrow 1.8s ease-in-out infinite .8s;}
+
+  @media(max-width:500px){
+    .topbar{padding:10px 14px;}
+    .hero{padding:20px 14px 18px;}
+    .wrap,.step-btns{padding-left:14px;padding-right:14px;}
+    .main-card{margin-left:14px;margin-right:14px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="back-btn" href="index.html">← Back to Home</a>
+  <span class="topbar-title">Charles' Law — Example 2</span>
+</nav>
+
+<header class="hero">
+  <div class="law-badge">Charles' Law</div>
+  <h1>Baking a Cake 🎂</h1>
+  <p class="tagline">When temperature increases, gas bubbles in the batter expand — pushing the cake upward and making it fluffy.</p>
+  <div class="formula-row">
+    <div class="formula-pill"><span class="eq">V₁/T₁ = V₂/T₂</span></div>
+    <div class="formula-pill" style="background:var(--amber-light);border-color:var(--amber-border);color:#633806;"><span class="eq">T↑ &nbsp;=&nbsp; V↑</span></div>
+  </div>
+</header>
+
+<div class="step-btns">
+  <button class="step-btn active" onclick="setStep(0)"><span class="step-num">1</span>Cold batter</button>
+  <button class="step-btn"        onclick="setStep(1)"><span class="step-num">2</span>Heating starts</button>
+  <button class="step-btn"        onclick="setStep(2)"><span class="step-num">3</span>Bubbles expand</button>
+  <button class="step-btn"        onclick="setStep(3)"><span class="step-num">4</span>Cake rises!</button>
+</div>
+
+<div class="main-card wrap">
+<svg id="svg" width="100%" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg">
+  <title>Baking a Cake — Charles' Law diagram</title>
+  <defs>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <!-- ── OVEN SHELL ── -->
+  <rect x="60" y="48" width="400" height="314" rx="18" fill="#D3D1C7" stroke="#888780" stroke-width="1.5"/>
+  <rect x="74" y="60" width="372" height="294" rx="12" fill="#B4B2A9" stroke="#888780" stroke-width="0.8"/>
+  <rect x="82" y="68" width="356" height="278" rx="8" fill="#FFF8F0"/>
+  <!-- Oven glow -->
+  <rect id="oven-glow" x="82" y="68" width="356" height="278" rx="8" fill="#FAC775" opacity="0" style="transition:opacity .5s;"/>
+  <!-- Heating element -->
+  <rect id="element" x="88" y="80" width="344" height="7" rx="3" fill="#E24B4A" opacity="0" style="transition:opacity .5s;"/>
+  <!-- Heat waves -->
+  <g id="heat-waves" opacity="0" style="transition:opacity .4s;">
+    <path class="heat-wave"  d="M118,98 Q136,88 154,98 Q172,108 190,98"  fill="none" stroke="#E24B4A" stroke-width="1.8" stroke-linecap="round"/>
+    <path class="heat-wave2" d="M208,98 Q226,88 244,98 Q262,108 280,98"  fill="none" stroke="#E24B4A" stroke-width="1.8" stroke-linecap="round"/>
+    <path class="heat-wave3" d="M298,98 Q316,88 334,98 Q352,108 370,98"  fill="none" stroke="#E24B4A" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+
+  <!-- ── PAN ── -->
+  <rect x="128" y="318" width="264" height="14" rx="5" fill="#888780" stroke="#5F5E5A" stroke-width="0.5"/>
+  <rect x="122" y="290" width="10" height="42" rx="3" fill="#888780"/>
+  <rect x="388" y="290" width="10" height="42" rx="3" fill="#888780"/>
+
+  <!-- ── CAKE BATTER BODY ── -->
+  <rect id="batter-body" x="132" y="282" width="256" height="36" fill="#EF9F27"/>
+  <!-- Cake dome -->
+  <path id="cake-dome" d="M132,282 Q260,278 388,282 Z" fill="#EF9F27"/>
+  <!-- Crust lines -->
+  <path id="crust1" d="M140,280 Q260,276 380,280" fill="none" stroke="#BA7517" stroke-width="1" opacity="0.5"/>
+  <!-- Cake texture -->
+  <line x1="132" y1="297" x2="388" y2="297" stroke="#BA7517" stroke-width="0.6" opacity="0.3"/>
+  <line x1="132" y1="310" x2="388" y2="310" stroke="#BA7517" stroke-width="0.6" opacity="0.3"/>
+
+  <!-- ── GAS BUBBLES ── -->
+  <g id="bubbles">
+    <circle class="bubble-anim" id="b1" cx="172" cy="291" r="4"   fill="none" stroke="#F09595" stroke-width="1.8" style="animation-delay:0s"/>
+    <circle class="bubble-anim" id="b2" cx="210" cy="284" r="3.5" fill="none" stroke="#F09595" stroke-width="1.8" style="animation-delay:.2s"/>
+    <circle class="bubble-anim" id="b3" cx="248" cy="280" r="5"   fill="none" stroke="#F09595" stroke-width="1.8" style="animation-delay:.4s"/>
+    <circle class="bubble-anim" id="b4" cx="286" cy="283" r="4"   fill="none" stroke="#F09595" stroke-width="1.8" style="animation-delay:.1s"/>
+    <circle class="bubble-anim" id="b5" cx="324" cy="289" r="3.5" fill="none" stroke="#F09595" stroke-width="1.8" style="animation-delay:.3s"/>
+    <circle class="bubble-anim" id="b6" cx="362" cy="292" r="4"   fill="none" stroke="#F09595" stroke-width="1.8" style="animation-delay:.5s"/>
+    <circle class="bubble-anim" id="b7" cx="230" cy="298" r="3"   fill="none" stroke="#F09595" stroke-width="1.5" style="animation-delay:.25s"/>
+    <circle class="bubble-anim" id="b8" cx="308" cy="300" r="3"   fill="none" stroke="#F09595" stroke-width="1.5" style="animation-delay:.45s"/>
+  </g>
+
+  <!-- ── RISE ARROWS ── -->
+  <g id="rise-arrows" opacity="0" style="transition:opacity .4s;">
+    <line class="rise-arrow"  x1="186" y1="278" x2="186" y2="250" stroke="#185FA5" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+    <line class="rise-arrow2" x1="260" y1="268" x2="260" y2="236" stroke="#185FA5" stroke-width="3"   marker-end="url(#arr-blue)"/>
+    <line class="rise-arrow3" x1="334" y1="278" x2="334" y2="250" stroke="#185FA5" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+  </g>
+
+  <!-- ── THERMOMETER ── -->
+  <rect x="412" y="88" width="16" height="196" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="1"/>
+  <circle cx="420" cy="290" r="10" fill="#E24B4A"/>
+  <rect id="therm-fill" x="414" y="232" width="12" height="58" rx="4" fill="#E24B4A" style="transition:all .6s;"/>
+  <line x1="428" y1="108" x2="434" y2="108" stroke="#888780" stroke-width="1"/><text x="438" y="112" font-family="DM Sans,sans-serif" font-size="10" fill="#5F5E5A">High</text>
+  <line x1="428" y1="158" x2="434" y2="158" stroke="#888780" stroke-width="1"/>
+  <line x1="428" y1="208" x2="434" y2="208" stroke="#888780" stroke-width="1"/>
+  <line x1="428" y1="238" x2="434" y2="238" stroke="#888780" stroke-width="1"/><text x="438" y="242" font-family="DM Sans,sans-serif" font-size="10" fill="#5F5E5A">Low</text>
+  <text id="temp-label" x="420" y="80" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="600" fill="#A32D2D">20°C</text>
+
+  <!-- ── OVEN DIAL ── -->
+  <circle cx="260" cy="370" r="18" fill="#D3D1C7" stroke="#888780" stroke-width="1"/>
+  <circle cx="260" cy="370" r="11" fill="#B4B2A9"/>
+  <line id="dial" x1="260" y1="370" x2="260" y2="359" stroke="#3C3489" stroke-width="2.5" stroke-linecap="round"/>
+  <text id="dial-label" x="260" y="394" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#5F5E5A">Off</text>
+
+  <!-- ── LABEL PILLS (right) ── -->
+  <g>
+    <rect x="476" y="100" width="168" height="44" rx="9" fill="#FAECE7" stroke="#F0A98A" stroke-width="1"/>
+    <text x="560" y="118" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="600" fill="#993C1D">Temperature</text>
+    <text id="lbl-temp" x="560" y="134" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#993C1D">20°C — cold</text>
+    <line x1="476" y1="122" x2="428" y2="120" stroke="#F0A98A" stroke-width="0.8" stroke-dasharray="4 3"/>
+    <circle cx="428" cy="120" r="2.5" fill="#D85A30"/>
+  </g>
+  <g>
+    <rect x="476" y="158" width="168" height="44" rx="9" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+    <text x="560" y="176" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="600" fill="#0C447C">Gas Volume</text>
+    <text id="lbl-vol"  x="560" y="192" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#0C447C">Small — flat batter</text>
+    <line x1="476" y1="180" x2="390" y2="286" stroke="#B5D4F4" stroke-width="0.8" stroke-dasharray="4 3"/>
+    <circle cx="390" cy="286" r="2.5" fill="#378ADD"/>
+  </g>
+  <g>
+    <rect x="476" y="216" width="168" height="44" rx="9" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+    <text x="560" y="234" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="600" fill="#085041">Cake Status</text>
+    <text id="lbl-cake" x="560" y="250" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#085041">Flat — not risen</text>
+  </g>
+
+  <!-- Charles Law box -->
+  <rect x="476" y="278" width="168" height="74" rx="10" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="560" y="298" text-anchor="middle" font-family="DM Serif Display,serif" font-size="14" fill="#3C3489">V₁/T₁ = V₂/T₂</text>
+  <line x1="486" y1="305" x2="634" y2="305" stroke="#AFA9EC" stroke-width="0.5"/>
+  <text x="560" y="320" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#534AB7" font-weight="500">Charles' Law</text>
+  <text x="560" y="336" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#534AB7">T ↑ → V ↑</text>
+  <text x="560" y="347" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#534AB7">Pressure stays constant</text>
+
+  <!-- Cake rises badge (step 4) -->
+  <g id="risen-badge" opacity="0" style="transition:opacity .4s;">
+    <rect x="86" y="92" width="128" height="28" rx="7" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+    <text x="150" y="110" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#085041">✓ Cake rises!</text>
+  </g>
+
+  <!-- Icing (step 4) -->
+  <g id="icing" opacity="0" style="transition:opacity .4s;">
+    <path d="M155,230 Q158,244 152,252" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M215,218 Q219,232 213,240" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M276,213 Q280,227 274,235" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M337,219 Q341,233 335,241" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>
+</div>
+
+<div class="wrap">
+  <div id="fact-card" class="fact-card">
+    <strong>Step 1 — Cold batter</strong>
+    The gas bubbles inside the batter are small because the temperature is low. The cake is flat and dense — no rising yet!
+  </div>
+  <div class="principle">
+    <em>"When temperature increases, gas volume increases because gas particles move faster and take up more space."</em>
+  </div>
+  <div class="tag-row">
+    <div class="tag amber">Temperature ↑ → Volume ↑</div>
+    <div class="tag blue">Pressure stays constant</div>
+  </div>
+</div>
+
+<script>
+const bubbleBaseR = [4, 3.5, 5, 4, 3.5, 4, 3, 3];
+const bubbleCx    = [172,210,248,286,324,362,230,308];
+const bubbleCy    = [291,284,280,283,289,292,298,300];
+
+const steps = [
+  {
+    glow:0, element:0, heatWaves:0, riseArrows:0, risenBadge:0, icing:0,
+    thermH:58, thermY:232, temp:"20°C",
+    bubbleScale:0.5,
+    domeD:"M132,282 Q260,278 388,282 Z",
+    crust1:"M140,280 Q260,276 380,280",
+    batY:282, batH:36,
+    dialAngle:-120, dialLabel:"Off",
+    tempVal:"20°C — cold", volVal:"Small — flat batter", cakeVal:"Flat — not risen",
+    factBg:"#E6F1FB",factColor:"#0C447C",factBorder:"#B5D4F4",
+    fact:"<strong>Step 1 — Cold batter</strong>The gas bubbles inside the batter are small because the temperature is low. The cake is flat and dense — no rising yet!"
+  },
+  {
+    glow:0.15, element:0.5, heatWaves:1, riseArrows:0, risenBadge:0, icing:0,
+    thermH:100, thermY:190, temp:"120°C",
+    bubbleScale:0.85,
+    domeD:"M132,270 Q260,260 388,270 Z",
+    crust1:"M140,268 Q260,258 380,268",
+    batY:270, batH:48,
+    dialAngle:-50, dialLabel:"120°C",
+    tempVal:"120°C — warming", volVal:"Growing slowly", cakeVal:"Slightly rising…",
+    factBg:"#FAEEDA",factColor:"#633806",factBorder:"#F5C97A",
+    fact:"<strong>Step 2 — Heating starts</strong>The oven raises the temperature of the gas bubbles inside the cake batter. Gas particles begin moving faster and spreading apart."
+  },
+  {
+    glow:0.28, element:0.7, heatWaves:1, riseArrows:1, risenBadge:0, icing:0,
+    thermH:148, thermY:142, temp:"175°C",
+    bubbleScale:1.35,
+    domeD:"M132,252 Q260,234 388,252 Z",
+    crust1:"M140,249 Q260,231 380,249",
+    batY:252, batH:66,
+    dialAngle:30, dialLabel:"175°C",
+    tempVal:"175°C — hot!", volVal:"Large — expanding fast", cakeVal:"Noticeably rising",
+    factBg:"#FAECE7",factColor:"#993C1D",factBorder:"#F0A98A",
+    fact:"<strong>Step 3 — Gas bubbles expand</strong>As temperature increases, gas particles move faster and spread farther apart. The bubbles grow and push the batter upward."
+  },
+  {
+    glow:0.38, element:0.8, heatWaves:1, riseArrows:1, risenBadge:1, icing:1,
+    thermH:182, thermY:108, temp:"200°C",
+    bubbleScale:1.7,
+    domeD:"M132,228 Q260,198 388,228 Z",
+    crust1:"M140,224 Q260,194 380,224",
+    batY:228, batH:90,
+    dialAngle:95, dialLabel:"200°C",
+    tempVal:"200°C — done!", volVal:"Maximum volume", cakeVal:"✓ Fluffy & risen!",
+    factBg:"#E1F5EE",factColor:"#085041",factBorder:"#5DCAA5",
+    fact:"<strong>Step 4 — Cake rises!</strong>The expanding gas bubbles push the batter upward, making the cake rise and become fluffy. Charles' Law: T↑ → V↑!"
+  }
+];
+
+function setStep(i){
+  const s = steps[i];
+  const svg = document.getElementById('svg');
+  document.querySelectorAll('.step-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+
+  svg.getElementById('oven-glow').style.opacity  = s.glow;
+  svg.getElementById('element').style.opacity    = s.element;
+  svg.getElementById('heat-waves').style.opacity = s.heatWaves;
+  svg.getElementById('rise-arrows').style.opacity= s.riseArrows;
+  svg.getElementById('risen-badge').style.opacity= s.risenBadge;
+  svg.getElementById('icing').style.opacity      = s.icing;
+
+  const tf = svg.getElementById('therm-fill');
+  tf.setAttribute('y', s.thermY); tf.setAttribute('height', s.thermH);
+  svg.getElementById('temp-label').textContent = s.temp;
+
+  svg.getElementById('cake-dome').setAttribute('d', s.domeD);
+  svg.getElementById('crust1').setAttribute('d', s.crust1);
+  const bb = svg.getElementById('batter-body');
+  bb.setAttribute('y', s.batY); bb.setAttribute('height', s.batH);
+
+  // scale bubbles
+  const ids = ['b1','b2','b3','b4','b5','b6','b7','b8'];
+  ids.forEach((id,k)=>{
+    const c = svg.getElementById(id);
+    const nr = Math.min(bubbleBaseR[k] * s.bubbleScale, 12);
+    c.setAttribute('r', nr);
+    c.setAttribute('cy', bubbleCy[k] - (nr - bubbleBaseR[k]) * 0.8);
+  });
+
+  // dial
+  const ang = s.dialAngle * Math.PI / 180;
+  const dl = svg.getElementById('dial');
+  dl.setAttribute('x2', 260 + Math.sin(ang)*11); dl.setAttribute('y2', 370 - Math.cos(ang)*11);
+  svg.getElementById('dial-label').textContent = s.dialLabel;
+
+  svg.getElementById('lbl-temp').textContent = s.tempVal;
+  svg.getElementById('lbl-vol').textContent  = s.volVal;
+  svg.getElementById('lbl-cake').textContent = s.cakeVal;
+
+  const fc = document.getElementById('fact-card');
+  fc.innerHTML = s.fact;
+  fc.style.background  = s.factBg;
+  fc.style.color       = s.factColor;
+  fc.style.borderColor = s.factBorder;
+}
+setStep(0);
+</script>
+</body>
+</html>

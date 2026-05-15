@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Boyle's Law — Lungs and Human Breathing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --boyle:#993C1D;--boyle-light:#FAECE7;--boyle-mid:#D85A30;--boyle-border:#F0A98A;
+    --charles:#185FA5;--charles-light:#E6F1FB;--charles-border:#B5D4F4;
+    --teal:#1D9E75;--teal-light:#E1F5EE;--teal-border:#5DCAA5;
+    --amber:#EF9F27;--amber-light:#FAEEDA;--amber-border:#F5C97A;
+    --purple:#534AB7;--purple-light:#EEEDFE;--purple-border:#AFA9EC;
+    --text:#1a1a2e;--muted:#5F5E5A;--bg:#f7f5f0;--white:#fff;--border:#D3D1C7;
+  }
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
+
+  .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--boyle);background:var(--boyle-light);border:1px solid var(--boyle-border);border-radius:8px;padding:7px 14px;transition:opacity .15s;}
+  .back-btn:hover{opacity:.8;}
+  .topbar-title{font-size:13px;color:var(--muted);font-weight:500;}
+
+  .hero{background:var(--white);border-bottom:1px solid var(--border);padding:28px 20px 24px;text-align:center;}
+  .law-badge{display:inline-block;background:var(--boyle-light);color:var(--boyle);border:1px solid var(--boyle-border);border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;margin-bottom:12px;}
+  h1{font-family:'DM Serif Display',serif;font-size:clamp(20px,5vw,30px);line-height:1.2;margin-bottom:8px;}
+  .tagline{font-size:13px;color:var(--muted);max-width:480px;margin:0 auto 16px;line-height:1.6;}
+  .formula-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .formula-pill{display:flex;align-items:center;gap:8px;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:500;border:1px solid var(--boyle-border);background:var(--boyle-light);color:var(--boyle);}
+  .formula-pill .eq{font-family:'DM Serif Display',serif;font-size:15px;}
+
+  .step-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:22px 20px 14px;max-width:780px;margin:0 auto;}
+  .step-btn{cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .2s;display:flex;align-items:center;gap:6px;}
+  .step-btn:hover{border-color:var(--boyle);color:var(--boyle);background:var(--boyle-light);}
+  .step-btn.active{background:var(--boyle);color:white;border-color:var(--boyle);}
+  .step-num{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.25);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .step-btn:not(.active) .step-num{background:var(--bg);color:var(--muted);}
+
+  .main-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:18px;max-width:780px;margin:0 auto 14px;}
+  .wrap{padding:0 20px;max-width:780px;margin:0 auto;}
+
+  .fact-card{border-radius:12px;padding:14px 18px;font-size:14px;line-height:1.6;border:1px solid var(--border);background:var(--boyle-light);color:var(--boyle);margin-bottom:12px;transition:background .3s,color .3s,border-color .3s;}
+  .fact-card strong{font-weight:600;display:block;margin-bottom:3px;font-size:15px;}
+  .principle{border-radius:12px;padding:13px 18px;background:var(--white);border:1px solid var(--border);font-size:13px;color:var(--muted);text-align:center;margin-bottom:14px;}
+  .principle em{font-style:italic;color:var(--boyle);font-weight:500;}
+  .tag-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+  .tag{border-radius:8px;padding:7px 13px;font-size:13px;font-weight:500;border:1px solid transparent;}
+  .tag.coral{background:var(--boyle-light);color:var(--boyle);border-color:var(--boyle-border);}
+  .tag.blue{background:var(--charles-light);color:var(--charles);border-color:var(--charles-border);}
+
+  @keyframes air-in{0%{opacity:0;transform:translateY(-10px)}40%{opacity:1}100%{opacity:0;transform:translateY(6px)}}
+  @keyframes air-out{0%{opacity:0;transform:translateY(6px)}40%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}
+  @keyframes particle-spread{0%,100%{opacity:.75}50%{opacity:1}}
+  @keyframes particle-pack{0%,100%{opacity:.75;r:3}50%{opacity:.5;r:2.2}}
+  @keyframes pressure-pulse{0%,100%{opacity:.9}50%{opacity:.4}}
+  .air-in{animation:air-in 1.5s ease-in-out infinite;}
+  .air-in2{animation:air-in 1.5s ease-in-out infinite .35s;}
+  .air-out{animation:air-out 1.5s ease-in-out infinite;}
+  .air-out2{animation:air-out 1.5s ease-in-out infinite .35s;}
+  .particle{animation:particle-spread 1.3s ease-in-out infinite;}
+  .particle-pack{animation:particle-pack 1.3s ease-in-out infinite;}
+  .pres-ring{animation:pressure-pulse .9s ease-in-out infinite;}
+
+  @media(max-width:500px){
+    .topbar{padding:10px 14px;}
+    .hero{padding:20px 14px 18px;}
+    .wrap,.step-btns{padding-left:14px;padding-right:14px;}
+    .main-card{margin-left:14px;margin-right:14px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="back-btn" href="index.html">← Back to Home</a>
+  <span class="topbar-title">Boyle's Law — Example 2</span>
+</nav>
+
+<header class="hero">
+  <div class="law-badge">Boyle's Law</div>
+  <h1>Lungs &amp; Human Breathing 🫁</h1>
+  <p class="tagline">When lung volume changes, pressure changes — air flows in when pressure drops and out when pressure rises.</p>
+  <div class="formula-row">
+    <div class="formula-pill"><span class="eq">P₁V₁ = P₂V₂</span></div>
+    <div class="formula-pill" style="background:var(--charles-light);border-color:var(--charles-border);color:var(--charles);"><span class="eq">V↑ = P↓ &nbsp;·&nbsp; V↓ = P↑</span></div>
+  </div>
+</header>
+
+<div class="step-btns">
+  <button class="step-btn active" onclick="setStep(0)"><span class="step-num">1</span>Normal lungs</button>
+  <button class="step-btn"        onclick="setStep(1)"><span class="step-num">2</span>Inhale</button>
+  <button class="step-btn"        onclick="setStep(2)"><span class="step-num">3</span>Expanded lungs</button>
+  <button class="step-btn"        onclick="setStep(3)"><span class="step-num">4</span>Exhale</button>
+</div>
+
+<div class="main-card wrap">
+<svg id="svg" width="100%" viewBox="0 0 680 410" xmlns="http://www.w3.org/2000/svg">
+  <title>Lungs and Human Breathing — Boyle's Law diagram</title>
+  <defs>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+    <marker id="arr-coral" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#D85A30" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <!-- ── BODY OUTLINE ── -->
+  <!-- Neck -->
+  <rect x="306" y="14" width="48" height="48" rx="10" fill="#FAEEDA" stroke="#D3D1C7" stroke-width="1"/>
+  <!-- Head hint -->
+  <ellipse cx="330" cy="10" rx="30" ry="16" fill="#FAEEDA" stroke="#D3D1C7" stroke-width="1"/>
+  <!-- Left torso half -->
+  <path d="M110,68 Q170,52 240,60 Q280,64 306,68 L306,370 Q260,380 195,378 Q145,376 110,370 Z" fill="#FFF6E8" stroke="#D3D1C7" stroke-width="1"/>
+  <!-- Right torso half -->
+  <path d="M550,68 Q490,52 420,60 Q380,64 354,68 L354,370 Q400,380 465,378 Q515,376 550,370 Z" fill="#FFF6E8" stroke="#D3D1C7" stroke-width="1"/>
+  <!-- Centre sternum -->
+  <path d="M306,68 Q330,64 354,68 L354,370 Q330,376 306,370 Z" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
+
+  <!-- Ribcage lines -->
+  <g stroke="#D3D1C7" stroke-width="0.8" fill="none" opacity="0.55">
+    <path d="M196,96 Q264,84 306,86"/><path d="M196,96 Q264,84 306,86" transform="scale(-1,1) translate(-660,0)"/>
+    <path d="M178,130 Q258,116 306,118"/><path d="M178,130 Q258,116 306,118" transform="scale(-1,1) translate(-660,0)"/>
+    <path d="M168,164 Q255,150 306,152"/><path d="M168,164 Q255,150 306,152" transform="scale(-1,1) translate(-660,0)"/>
+    <path d="M166,198 Q254,186 306,188"/><path d="M166,198 Q254,186 306,188" transform="scale(-1,1) translate(-660,0)"/>
+    <path d="M170,232 Q256,220 306,222"/><path d="M170,232 Q256,220 306,222" transform="scale(-1,1) translate(-660,0)"/>
+  </g>
+
+  <!-- ── TRACHEA ── -->
+  <rect x="322" y="52" width="16" height="82" rx="5" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.2"/>
+  <line x1="322" y1="68"  x2="338" y2="68"  stroke="#378ADD" stroke-width="0.8" opacity="0.5"/>
+  <line x1="322" y1="80"  x2="338" y2="80"  stroke="#378ADD" stroke-width="0.8" opacity="0.5"/>
+  <line x1="322" y1="92"  x2="338" y2="92"  stroke="#378ADD" stroke-width="0.8" opacity="0.5"/>
+  <line x1="322" y1="104" x2="338" y2="104" stroke="#378ADD" stroke-width="0.8" opacity="0.5"/>
+  <line x1="322" y1="116" x2="338" y2="116" stroke="#378ADD" stroke-width="0.8" opacity="0.5"/>
+  <!-- Bronchi -->
+  <path id="bronch-l" d="M322,128 Q284,138 222,145" fill="none" stroke="#378ADD" stroke-width="2.5" stroke-linecap="round" style="transition:d .6s;"/>
+  <path id="bronch-r" d="M338,128 Q376,138 438,145" fill="none" stroke="#378ADD" stroke-width="2.5" stroke-linecap="round" style="transition:d .6s;"/>
+
+  <!-- ── DIAPHRAGM ── -->
+  <path id="diaphragm" d="M128,312 Q252,330 330,326 Q408,330 532,312" fill="none" stroke="#EF9F27" stroke-width="2.5" stroke-linecap="round" style="transition:d .6s;"/>
+  <text id="diaphragm-lbl" x="330" y="348" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#BA7517" font-weight="500">diaphragm — resting</text>
+
+  <!-- ── LEFT LUNG ── -->
+  <g id="lung-l" style="transform-origin:222px 228px;transform:scale(1);transition:transform .6s cubic-bezier(.4,0,.2,1);">
+    <path d="M222,145 Q144,158 134,222 Q128,272 156,308 Q186,332 222,328 Q254,324 264,282 Q272,252 266,202 Q262,160 222,145 Z" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5"/>
+    <path d="M222,145 Q194,192 189,252" fill="none" stroke="#B5D4F4" stroke-width="0.8" opacity="0.6"/>
+    <path d="M222,158 Q204,188 200,222 Q196,252 200,272" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-linecap="round" opacity="0.45"/>
+    <path d="M222,158 Q230,192 228,228" fill="none" stroke="#378ADD" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
+    <path d="M222,158 Q242,196 244,234" fill="none" stroke="#378ADD" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
+  </g>
+
+  <!-- ── RIGHT LUNG ── -->
+  <g id="lung-r" style="transform-origin:438px 228px;transform:scale(1);transition:transform .6s cubic-bezier(.4,0,.2,1);">
+    <path d="M438,145 Q516,158 526,222 Q532,272 504,308 Q474,332 438,328 Q406,324 396,282 Q388,252 394,202 Q398,160 438,145 Z" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5"/>
+    <path d="M438,145 Q466,192 471,252" fill="none" stroke="#B5D4F4" stroke-width="0.8" opacity="0.6"/>
+    <path d="M438,158 Q456,188 460,222 Q464,252 460,272" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-linecap="round" opacity="0.45"/>
+    <path d="M438,158 Q430,192 432,228" fill="none" stroke="#378ADD" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
+    <path d="M438,158 Q418,196 416,234" fill="none" stroke="#378ADD" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
+  </g>
+
+  <!-- Heart -->
+  <path d="M308,195 Q308,180 320,180 Q330,180 330,191 Q330,180 340,180 Q352,180 352,195 Q352,213 330,230 Q308,213 308,195 Z" fill="#F09595" stroke="#E24B4A" stroke-width="1" opacity="0.7"/>
+
+  <!-- Air particles -->
+  <g id="particles-l" opacity="0.85">
+    <circle class="particle" cx="175" cy="210" r="3" fill="#185FA5" style="animation-delay:0s"/>
+    <circle class="particle" cx="198" cy="234" r="3" fill="#185FA5" style="animation-delay:.2s"/>
+    <circle class="particle" cx="188" cy="264" r="3" fill="#185FA5" style="animation-delay:.4s"/>
+    <circle class="particle" cx="214" cy="248" r="3" fill="#185FA5" style="animation-delay:.1s"/>
+    <circle class="particle" cx="232" cy="218" r="3" fill="#185FA5" style="animation-delay:.3s"/>
+    <circle class="particle" cx="246" cy="246" r="3" fill="#185FA5" style="animation-delay:.5s"/>
+    <circle class="particle" cx="206" cy="290" r="3" fill="#185FA5" style="animation-delay:.15s"/>
+    <circle class="particle" cx="228" cy="280" r="3" fill="#185FA5" style="animation-delay:.35s"/>
+  </g>
+  <g id="particles-r" opacity="0.85">
+    <circle class="particle" cx="485" cy="210" r="3" fill="#185FA5" style="animation-delay:.1s"/>
+    <circle class="particle" cx="462" cy="234" r="3" fill="#185FA5" style="animation-delay:.3s"/>
+    <circle class="particle" cx="472" cy="264" r="3" fill="#185FA5" style="animation-delay:.5s"/>
+    <circle class="particle" cx="446" cy="248" r="3" fill="#185FA5" style="animation-delay:.2s"/>
+    <circle class="particle" cx="428" cy="218" r="3" fill="#185FA5" style="animation-delay:.4s"/>
+    <circle class="particle" cx="414" cy="246" r="3" fill="#185FA5" style="animation-delay:.0s"/>
+    <circle class="particle" cx="454" cy="290" r="3" fill="#185FA5" style="animation-delay:.25s"/>
+    <circle class="particle" cx="432" cy="280" r="3" fill="#185FA5" style="animation-delay:.45s"/>
+  </g>
+
+  <!-- ── AIR-IN ARROWS ── -->
+  <g id="arrows-in" opacity="0" style="transition:opacity .4s;">
+    <line class="air-in"  x1="330" y1="4"  x2="330" y2="44" stroke="#1D9E75" stroke-width="3"   marker-end="url(#arr-green)" stroke-linecap="round"/>
+    <line class="air-in2" x1="308" y1="10" x2="308" y2="44" stroke="#1D9E75" stroke-width="2"   marker-end="url(#arr-green)" stroke-linecap="round" opacity="0.6"/>
+    <line class="air-in2" x1="352" y1="10" x2="352" y2="44" stroke="#1D9E75" stroke-width="2"   marker-end="url(#arr-green)" stroke-linecap="round" opacity="0.6"/>
+    <rect x="356" y="4"  width="78" height="22" rx="6" fill="#E1F5EE"/>
+    <text x="395" y="19" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#085041">air moves in</text>
+  </g>
+
+  <!-- ── AIR-OUT ARROWS ── -->
+  <g id="arrows-out" opacity="0" style="transition:opacity .4s;">
+    <line class="air-out"  x1="330" y1="44" x2="330" y2="4"  stroke="#D85A30" stroke-width="3"   marker-end="url(#arr-coral)" stroke-linecap="round"/>
+    <line class="air-out2" x1="308" y1="44" x2="308" y2="8"  stroke="#D85A30" stroke-width="2"   marker-end="url(#arr-coral)" stroke-linecap="round" opacity="0.6"/>
+    <line class="air-out2" x1="352" y1="44" x2="352" y2="8"  stroke="#D85A30" stroke-width="2"   marker-end="url(#arr-coral)" stroke-linecap="round" opacity="0.6"/>
+    <rect x="356" y="4"  width="92" height="22" rx="6" fill="#FAECE7"/>
+    <text x="402" y="19" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#993C1D">air moves out</text>
+  </g>
+
+  <!-- Pressure rings (high pressure on exhale) -->
+  <g id="pres-rings-l" opacity="0" style="transition:opacity .4s;">
+    <ellipse class="pres-ring" cx="222" cy="230" rx="52" ry="34" fill="none" stroke="#D85A30" stroke-width="1.4" stroke-dasharray="5 4"/>
+    <ellipse class="pres-ring" cx="222" cy="230" rx="36" ry="22" fill="none" stroke="#D85A30" stroke-width="0.8" stroke-dasharray="4 4" style="animation-delay:.3s"/>
+  </g>
+  <g id="pres-rings-r" opacity="0" style="transition:opacity .4s;">
+    <ellipse class="pres-ring" cx="438" cy="230" rx="52" ry="34" fill="none" stroke="#D85A30" stroke-width="1.4" stroke-dasharray="5 4"/>
+    <ellipse class="pres-ring" cx="438" cy="230" rx="36" ry="22" fill="none" stroke="#D85A30" stroke-width="0.8" stroke-dasharray="4 4" style="animation-delay:.3s"/>
+  </g>
+
+  <!-- ── LABEL PILLS (right side) ── -->
+  <g>
+    <rect x="556" y="88"  width="100" height="44" rx="9" fill="#FAECE7" stroke="#F0A98A" stroke-width="1"/>
+    <text x="606" y="106" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="600" fill="#993C1D">Volume</text>
+    <text id="lbl-vol"  x="606" y="122" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#993C1D">Normal</text>
+    <line x1="556" y1="110" x2="530" y2="200" stroke="#F0A98A" stroke-width="0.8" stroke-dasharray="4 3"/>
+    <circle cx="530" cy="200" r="2.5" fill="#D85A30"/>
+  </g>
+  <g>
+    <rect x="556" y="146" width="100" height="44" rx="9" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+    <text x="606" y="164" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="600" fill="#085041">Pressure</text>
+    <text id="lbl-pres" x="606" y="180" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#085041">Balanced</text>
+    <line x1="556" y1="163" x2="530" y2="230" stroke="#5DCAA5" stroke-width="0.8" stroke-dasharray="4 3"/>
+    <circle cx="530" cy="230" r="2.5" fill="#1D9E75"/>
+  </g>
+  <g>
+    <rect x="556" y="204" width="100" height="44" rx="9" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+    <text x="606" y="222" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="600" fill="#3C3489">Air flow</text>
+    <text id="lbl-flow" x="606" y="238" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#534AB7">At rest</text>
+  </g>
+
+  <!-- Boyle box -->
+  <rect x="556" y="266" width="100" height="82" rx="10" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="606" y="285" text-anchor="middle" font-family="DM Serif Display,serif" font-size="13" fill="#3C3489">P₁V₁=P₂V₂</text>
+  <line x1="564" y1="292" x2="648" y2="292" stroke="#AFA9EC" stroke-width="0.5"/>
+  <text x="606" y="308" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#534AB7" font-weight="500">Boyle's Law</text>
+  <text x="606" y="322" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#534AB7">V↑ → P↓</text>
+  <text x="606" y="340" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#534AB7">V↓ → P↑</text>
+</svg>
+</div>
+
+<div class="wrap">
+  <div id="fact-card" class="fact-card">
+    <strong>Step 1 — Normal lungs</strong>
+    The lungs are at a normal resting volume. Pressure inside equals pressure outside. Everything is balanced — no air is moving.
+  </div>
+  <div class="principle">
+    <em>"When lung volume increases, pressure decreases because air particles have more space to move."</em>
+  </div>
+  <div class="tag-row">
+    <div class="tag coral">Volume ↑ → Pressure ↓</div>
+    <div class="tag blue">Temperature stays constant</div>
+  </div>
+</div>
+
+<script>
+const steps=[
+  {
+    lungScale:1.0,
+    arrowsIn:0, arrowsOut:0, presRings:0,
+    particleAnim:'spread',
+    diagD:"M128,312 Q252,330 330,326 Q408,330 532,312",
+    diagLbl:"diaphragm — resting",
+    volVal:"Normal", presVal:"Balanced", flowVal:"At rest",
+    factBg:"#EEEDFE",factColor:"#3C3489",factBorder:"#AFA9EC",
+    fact:"<strong>Step 1 — Normal lungs</strong>The lungs are at a normal resting volume. Pressure inside equals pressure outside. Everything is balanced — no air is moving."
+  },
+  {
+    lungScale:1.22,
+    arrowsIn:1, arrowsOut:0, presRings:0,
+    particleAnim:'spread',
+    diagD:"M128,330 Q252,348 330,344 Q408,348 532,330",
+    diagLbl:"diaphragm moves down",
+    volVal:"Increasing ↑", presVal:"Decreasing ↓", flowVal:"Air moves in",
+    factBg:"#E1F5EE",factColor:"#085041",factBorder:"#5DCAA5",
+    fact:"<strong>Step 2 — Inhale</strong>The diaphragm moves down, expanding the chest. Lung volume increases, pressure drops below outside, and air rushes in — Boyle's Law!"
+  },
+  {
+    lungScale:1.22,
+    arrowsIn:0, arrowsOut:0, presRings:0,
+    particleAnim:'spread',
+    diagD:"M128,330 Q252,348 330,344 Q408,348 532,330",
+    diagLbl:"diaphragm — held low",
+    volVal:"Large — full", presVal:"Balanced", flowVal:"Holding air",
+    factBg:"#FAEEDA",factColor:"#633806",factBorder:"#F5C97A",
+    fact:"<strong>Step 3 — Expanded lungs</strong>The lungs are fully expanded and filled with air. Pressure is balanced with outside again. The diaphragm is held at its lowest point."
+  },
+  {
+    lungScale:0.86,
+    arrowsIn:0, arrowsOut:1, presRings:1,
+    particleAnim:'pack',
+    diagD:"M128,300 Q252,316 330,312 Q408,316 532,300",
+    diagLbl:"diaphragm rises up",
+    volVal:"Decreasing ↓", presVal:"Increasing ↑", flowVal:"Air moves out",
+    factBg:"#FAECE7",factColor:"#993C1D",factBorder:"#F0A98A",
+    fact:"<strong>Step 4 — Exhale</strong>The diaphragm rises, compressing the chest. Lung volume decreases, pressure increases above outside, and air is pushed out — Boyle's Law again!"
+  }
+];
+
+function setStep(i){
+  const s=steps[i];
+  const svg=document.getElementById('svg');
+  document.querySelectorAll('.step-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+
+  svg.getElementById('lung-l').style.transform=`scale(${s.lungScale})`;
+  svg.getElementById('lung-r').style.transform=`scale(${s.lungScale})`;
+  svg.getElementById('arrows-in').style.opacity=s.arrowsIn;
+  svg.getElementById('arrows-out').style.opacity=s.arrowsOut;
+  svg.getElementById('pres-rings-l').style.opacity=s.presRings;
+  svg.getElementById('pres-rings-r').style.opacity=s.presRings;
+
+  svg.getElementById('diaphragm').setAttribute('d',s.diagD);
+  svg.getElementById('diaphragm-lbl').textContent=s.diagLbl;
+
+  // particle animation class
+  const cls = s.particleAnim==='pack' ? 'particle-pack' : 'particle';
+  const rem = s.particleAnim==='pack' ? 'particle'      : 'particle-pack';
+  ['particles-l','particles-r'].forEach(id=>{
+    svg.getElementById(id).querySelectorAll('circle').forEach(c=>{
+      c.classList.remove(rem); c.classList.add(cls);
+    });
+  });
+
+  svg.getElementById('lbl-vol').textContent=s.volVal;
+  svg.getElementById('lbl-pres').textContent=s.presVal;
+  svg.getElementById('lbl-flow').textContent=s.flowVal;
+
+  const fc=document.getElementById('fact-card');
+  fc.innerHTML=s.fact;
+  fc.style.background=s.factBg;
+  fc.style.color=s.factColor;
+  fc.style.borderColor=s.factBorder;
+}
+setStep(0);
+</script>
+</body>
+</html>
